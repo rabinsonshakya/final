@@ -1,0 +1,99 @@
+package com.cubic.ehr.prescriber.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.cubic.ehr.common.exception.PrescriberInvalidDataException;
+import com.cubic.ehr.common.exception.PrescriberNotFoundException;
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+import com.cubic.ehr.dao.repo.PrescriberRepo;
+
+
+@Service
+@Transactional
+public class PrescriberServiceImpl implements PrescriberService {
+
+	@Autowired
+	private PrescriberRepo prescriberRepo;
+
+	@Autowired
+	private PrescriberMapper mapper;
+	
+	@Override
+	public PrescriberVO createPrescriber(final PrescriberVO prescriber) {
+		// TODO Auto-generated method stub
+		if (prescriber == null || StringUtils.isEmpty(prescriber.getFirstName())
+				|| StringUtils.isEmpty(prescriber.getLastName()) || StringUtils.isEmpty(prescriber.getPhoneNumber())
+				|| StringUtils.isEmpty(prescriber.getDeaNumber()) || StringUtils.isEmpty(prescriber.getSpecialization())
+				|| StringUtils.isEmpty(prescriber.getGender())) {
+			
+			
+			throw new PrescriberInvalidDataException("Prescriber creation failed, required fields are missing");
+		}
+		final PrescriberEntity entity = mapper.mapToPrescriberEntity(prescriber);
+		prescriberRepo.save(entity);
+		prescriber.setId(entity.getPk());
+		//prescriber.setCreatedDate(entity.getCreatedDate());
+		System.out.println(prescriber);
+		return prescriber;
+	}
+
+	@Override
+	public void modifyPrescriber(final PrescriberVO prescriber) {
+		if (prescriber == null || StringUtils.isEmpty(prescriber.getFirstName())
+				|| StringUtils.isEmpty(prescriber.getLastName()) || StringUtils.isEmpty(prescriber.getPhoneNumber())
+				|| StringUtils.isEmpty(prescriber.getDeaNumber()) || StringUtils.isEmpty(prescriber.getSpecialization())
+				|| StringUtils.isEmpty(prescriber.getGender())) {
+			throw new PrescriberInvalidDataException("Prescriber creation failed, required fields are missing");
+		}
+		PrescriberEntity entity = findPrescriberEntity(prescriber.getId());
+		//prescriberRepo.save(entity);
+		System.out.println("Before Map: " + entity);
+		entity = mapper.mapToPrescriberEntity(entity, prescriber);
+		prescriberRepo.save(entity);
+		
+	}
+
+	@Override
+	public void prescriberStatus(final PrescriberVO prescriber) {
+		System.out.println("from service");
+		prescriberRepo.setActiveForPrescriberEntity(prescriber.getActive(), prescriber.getId());
+	}
+
+	@Override
+	public List<PrescriberVO> searchPrescriber(String name, String deaNumber) {
+		// TODO Auto-generated method stub
+		final String sName = (name == null) ? "%" : name.trim() + "%";
+		final String dea = (deaNumber == null) ? "%" : deaNumber.trim() + "%";
+
+		final List<PrescriberEntity> entities = prescriberRepo.search(sName, dea);
+		return mapper.mapToPrescriberDataList(entities);
+		//return null;
+	}
+
+	@Override
+	public PrescriberVO findPrescriber(Long id) {
+		if (id == null) {
+			throw new PrescriberInvalidDataException("Id is required to find Prescriber");
+		}
+		final PrescriberEntity entity = findPrescriberEntity(id);
+
+		return mapper.mapToPrescriberVO(entity);
+	}	
+	
+	private PrescriberEntity findPrescriberEntity(final Long id) {
+		PrescriberEntity entity = prescriberRepo.findOne(id);
+		if (entity == null) {
+			throw new PrescriberNotFoundException("Prescriber was not found in the system");
+		}
+		return entity;
+	}
+
+	
+	
+}

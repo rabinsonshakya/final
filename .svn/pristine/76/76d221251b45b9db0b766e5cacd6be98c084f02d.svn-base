@@ -1,0 +1,48 @@
+package com.cubic.ehr.prescriber.service;
+
+import java.sql.SQLException;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+import com.cubic.ehr.dao.repo.PrescriberRepo;
+import com.cubic.ehr.prescriber.test.PrescriberData;
+
+@RunWith(MockitoJUnitRunner.class)
+public class PrescriberServiceImplTest{
+	
+	@InjectMocks
+	private PrescriberServiceImpl impl;
+	
+	@Mock
+	private PrescriberRepo prescriberRepo;
+	
+	@Spy
+	private PrescriberMapper mapper;
+	
+	@Spy
+	private PrescriberValidator prescriberValidator;
+	
+	private PrescriberData prescriber;
+	private PrescriberVO input;
+	private PrescriberEntity entity;
+	
+	@Before
+	public void setUp() {
+		input = prescriber.createPrescriber();
+		entity = prescriber.createProductEntity();
+	}
+	
+	@Test
+	public void testCreatePrescriber() throws SQLException {
+		impl.createPrescriber(input);
+	}
+	
+}

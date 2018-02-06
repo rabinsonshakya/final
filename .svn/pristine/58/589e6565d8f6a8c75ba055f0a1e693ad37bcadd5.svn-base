@@ -1,0 +1,142 @@
+package com.cubic.ehr.prescriber.service;
+
+import java.util.List;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.cubic.ehr.common.exception.DuplicateEntryException;
+import com.cubic.ehr.common.exception.PrescriberInvalidDataException;
+import com.cubic.ehr.common.exception.PrescriberNotFoundException;
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.data.PrescriberVOstatus;
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+import com.cubic.ehr.dao.repo.PrescriberRepo;
+
+
+@Service
+@Transactional
+public class PrescriberServiceImpl implements PrescriberService {
+
+	private final static Logger Logger = LoggerFactory.getLogger(PrescriberServiceImpl.class);
+	
+	@Autowired
+	private PrescriberRepo prescriberRepo;
+
+	@Autowired
+	private PrescriberMapper mapper;
+	
+	@Autowired
+	private PrescriberValidator prescriberValidator;
+	
+	@Override
+	public PrescriberVO createPrescriber(final PrescriberVO prescriber) {
+		
+		Logger.debug("Entering PrescriberServiceImpl.createPrescriber");
+		
+		prescriberValidator.validate(prescriber);
+		
+		checkForDuplication(prescriber.getDeaNumber());
+		
+		final PrescriberEntity entity = mapper.mapToPrescriberEntity(prescriber);
+		prescriberRepo.save(entity);
+		prescriber.setId(entity.getPk());
+		System.out.println(prescriber);
+		
+		Logger.info("Prescriber Created. PK = {};", prescriber.getId());
+		Logger.debug("Exiting PrescriberServiceImpl.createPrescriber");
+
+		return prescriber;
+	}
+
+	@Override
+	public void modifyPrescriber(final PrescriberVO prescriber) {
+		Logger.debug("Entering PrescriberServiceImpl.modifyPrescriber");
+		prescriberValidator.validate(prescriber);
+		checkForDuplication(prescriber.getId(), prescriber.getDeaNumber());
+		PrescriberEntity entity = findPrescriberEntity(prescriber.getId());
+		System.out.println("Before Map: " + entity);
+		entity = mapper.mapToPrescriberEntity(entity, prescriber);
+		prescriberRepo.save(entity);
+		Logger.info("Prescriber Modified. PK = {};", prescriber.getId());
+		Logger.debug("Exiting PrescriberServiceImpl.modifyPrescriber");
+	}
+
+	@Override
+	public void prescriberStatus(final PrescriberVOstatus prescriber) {
+		Logger.debug("Entering PrescriberServiceImpl.prescriberStatus");
+		prescriberRepo.setActiveForPrescriberEntity(prescriber.getActive(), prescriber.getId());
+		Logger.info("Prescriber Status changed. Status = {};", prescriber.getActive());
+		Logger.debug("Exiting PrescriberServiceImpl.prescriberStatus");
+	}
+
+	@Override
+	public List<PrescriberVO> searchPrescriber(String name, String deaNumber) {
+		Logger.debug("Entering PrescriberServiceImpl.searchPrescriber");
+		final String sName = (name == null) ? "%" : name.trim() + "%";
+		final String dea = (deaNumber == null) ? "%" : deaNumber.trim() + "%";
+		final List<PrescriberEntity> entities = prescriberRepo.search(sName, dea);
+		Logger.info("Prescribers found. Number = {};", entities.size());
+		Logger.debug("Exiting PrescriberServiceImpl.searchPrescriber");
+		return mapper.mapToPrescriberDataList(entities);
+	}
+
+	@Override
+	public PrescriberVO findPrescriber(Long id) {
+		
+		Logger.debug("Entering PrescriberServiceImpl.findPrescriber");
+		if (id == null) {
+			Logger.debug("Error: Id is required");
+			throw new PrescriberInvalidDataException("Id is required to find Prescriber");
+		}
+		final PrescriberEntity entity = findPrescriberEntity(id);
+		Logger.info("Prescribers found. Entity = {};", entity);
+		Logger.debug("Exiting PrescriberServiceImpl.findPrescriber");
+		return mapper.mapToPrescriberVO(entity);
+	}	
+	
+	private PrescriberEntity findPrescriberEntity(final Long id) {
+		PrescriberEntity entity = prescriberRepo.findOne(id);
+		if (entity == null) {
+			throw new PrescriberNotFoundException("Prescriber was not found in the system");
+		}
+		return entity;
+	}
+
+	public PrescriberEntity searchPrescriberFromDea(String deaNumber) {
+		final PrescriberEntity entity = prescriberRepo.searchForDuplication(deaNumber);
+		return entity;
+	}
+	
+	public PrescriberEntity searchPrescriberFromDea(Long id, String deaNumber) {
+		final PrescriberEntity entity = prescriberRepo.searchForDuplication(id, deaNumber);
+		return entity;
+	}
+	
+	private void checkForDuplication(final String str) {
+		Logger.debug("Entering PrescriberServiceImpl.checkForDuplication");
+		if(searchPrescriberFromDea(str) != null && searchPrescriberFromDea(str).getDeaNumber().length() > 1) {
+			Logger.info("Prescriber found with deaNumber = {};", str);
+			throw new DuplicateEntryException("Prescriber creation failed, Duplicate Entry");
+		}
+		Logger.info("No Prescriber found with deaNumber = {};", str);
+		Logger.debug("Exiting PrescriberServiceImpl.checkForDuplication");
+		//System.out.println(prescriber.getDeaNumber());
+	}
+	
+	private void checkForDuplication(Long id, final String str) {
+		Logger.debug("Entering PrescriberServiceImpl.checkForDuplication");
+		if(searchPrescriberFromDea(id, str) != null && searchPrescriberFromDea(id, str).getDeaNumber().length() > 1) {
+			Logger.info("Prescriber found with deaNumber = {};", str);
+			throw new DuplicateEntryException("Prescriber creation failed, Duplicate Entry");
+		}
+		Logger.info("No Prescriber found with deaNumber = {};", str);
+		Logger.debug("Exiting PrescriberServiceImpl.checkForDuplication");
+		//System.out.println(prescriber.getDeaNumber());
+	}
+	
+	
+}

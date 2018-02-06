@@ -1,0 +1,93 @@
+package com.cubic.ehr.rest.resources;
+
+import java.util.List;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.cubic.ehr.dao.data.PrescriberSearchResult;
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.data.PrescriberVOstatus;
+import com.cubic.ehr.prescriber.service.PrescriberService;
+
+
+
+@Path("/prescriber")
+@Consumes({ MediaType.APPLICATION_JSON })
+@Produces({ MediaType.APPLICATION_JSON })
+public class PrescriberWS {
+	
+	@Autowired
+	private PrescriberService ps;
+	
+	@POST
+	public Response create(final PrescriberVO prescriber){
+
+		final PrescriberVO entity = ps.createPrescriber(prescriber);
+		final ResponseBuilder rb = Response.ok();
+		return rb.entity(entity).build();
+	}
+	
+	@GET
+	@Path("/{pk}")
+	public Response find(@PathParam("pk") final Long id) {
+		final PrescriberVO entity = ps.findPrescriber(id);
+		return Response.ok().entity(entity).build();
+	}
+	
+	@PUT
+	public Response modify(final PrescriberVO prescriber) {
+		///System.out.println("Before: " + prescriber);
+		ps.modifyPrescriber(prescriber);
+		//System.out.println("After:" + prescriber);
+		//final PrescriberVO entity = ps.findPrescriber(prescriber.getId());
+		final ResponseBuilder rb = Response.ok();
+		return rb.build();
+
+	}
+	
+	@PUT
+	@Path("/s")
+	public Response status(final PrescriberVO prescriber) {
+		System.out.println(prescriber);
+		ps.prescriberStatus(prescriber);
+		//System.out.println("After:" + prescriber);
+		//final PrescriberVO entity = ps.findPrescriber(prescriber.getId());
+		final ResponseBuilder rb = Response.ok();
+		return rb.build();
+
+	}
+	
+	@PUT
+	@Path("/test")
+	public void test1() {
+		
+	}
+	
+
+	@GET
+	public Response search(@QueryParam("name") final String name, @QueryParam("dea") final String deaNumber) {
+
+		return searchPrescriber(name, deaNumber);
+	}
+
+	
+	private Response searchPrescriber(final String name, final String deaNumber) {
+		final List<PrescriberVO> prescribers = ps.searchPrescriber(name, deaNumber);
+		PrescriberSearchResult entity = new PrescriberSearchResult(prescribers);
+		return Response.ok().entity(entity).build();
+	}
+
+	
+} 

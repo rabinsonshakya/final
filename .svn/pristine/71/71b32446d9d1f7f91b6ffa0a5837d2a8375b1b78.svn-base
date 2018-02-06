@@ -1,0 +1,7 @@
+package com.cubic.ehr.dao.entity;
+
+public interface QueryConstant {
+
+	String PRESCRIBER_SEARCH = "PRESCRIBER_SEARCH";
+
+}

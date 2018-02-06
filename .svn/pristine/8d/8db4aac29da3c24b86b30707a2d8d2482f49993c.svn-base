@@ -1,0 +1,6 @@
+package com.cubic.ehr.common;
+
+public enum Specialization {
+	ALLERGIST, CARDIOLOGIST, NEUROLOGIST, ONCOLOGIST, Dermatologist;
+
+}

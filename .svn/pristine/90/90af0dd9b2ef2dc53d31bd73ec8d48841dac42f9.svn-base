@@ -1,0 +1,115 @@
+package com.cubic.ehr.common;
+
+import com.cubic.ehr.common.exception.PrescriberInvalidDataException;
+
+public class Validation {
+
+	public boolean validateFirstName(String firstName) {
+		if (firstName != null) {
+			if (firstName.length() <= 2 || firstName.length() >= 20) {
+				throw new PrescriberInvalidDataException("Prescriber creation failed, firstName not Valid");
+			} else {
+				return true;
+			}
+		} else {
+			throw new PrescriberInvalidDataException("Prescriber creation failed, firstName cannot be null");
+		}
+
+	}
+
+	public boolean validateLastName(String lastName) {
+		if (lastName != null) {
+			if (lastName.length() <= 2 || lastName.length() >= 20) {
+				throw new PrescriberInvalidDataException("Prescriber creation failed, lastName not Valid");
+			} else {
+				return true;
+			}
+		} else {
+			throw new PrescriberInvalidDataException("Prescriber creation failed, lastName cannot be null");
+		}
+
+	}
+
+	public boolean validatePhoneNumber(String phoneNumber) {
+		if (phoneNumber != null) {
+			// validate phone numbers of format "1234567890"
+			if (phoneNumber.matches("\\d{10}"))
+				return true;
+			// validating phone number with -, . or spaces
+			else if (phoneNumber.matches("\\d{3}[-\\.\\s]\\d{3}[-\\.\\s]\\d{4}"))
+				return true;
+			// validating phone number with extension length from 3 to 5
+			else if (phoneNumber.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}"))
+				return true;
+			// validating phone number where area code is in braces ()
+			else if (phoneNumber.matches("\\(\\d{3}\\)-\\d{3}-\\d{4}"))
+				return true;
+			// return false if nothing matches the input
+			else {
+				throw new PrescriberInvalidDataException("Prescriber creation failed, phoneNumber not Valid");
+			}
+		} else {
+			throw new PrescriberInvalidDataException("Prescriber creation failed, phoneNumber cannot be null");
+		}
+
+	}
+
+	public boolean validateFaxNumber(String faxNumber) {
+		if (faxNumber != null) {
+			// validate phone numbers of format "1234567890"
+			if (faxNumber.matches("\\d{10}"))
+				return true;
+			// validating phone number with -, . or spaces
+			else if (faxNumber.matches("\\d{3}[-\\.\\s]\\d{3}[-\\.\\s]\\d{4}"))
+				return true;
+			// validating phone number with extension length from 3 to 5
+			else if (faxNumber.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}"))
+				return true;
+			// validating phone number where area code is in braces ()
+			else if (faxNumber.matches("\\(\\d{3}\\)-\\d{3}-\\d{4}"))
+				return true;
+			// return false if nothing matches the input
+			else {
+				throw new PrescriberInvalidDataException("Prescriber creation failed, phoneNumber not Valid");
+			}
+		} else {
+			return true;
+		}
+
+	}
+
+	public boolean validateEmailId(String emailId) {
+		final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+				+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+		if (emailId != null) {
+			if (emailId.matches(EMAIL_PATTERN)) {
+				return true;
+			} else {
+				throw new PrescriberInvalidDataException("Prescriber creation failed, email not Valid");
+			}
+
+		} else {
+			return true;
+		}
+		// Pattern pattern;
+		// Matcher matcher;
+		// pattern = Pattern.compile(EMAIL_PATTERN);
+		// matcher = pattern.matcher(emailId);
+		// return matcher.matches();
+	}
+
+	public boolean validateDeaNumber(String deaNumber) {
+		if (deaNumber != null) {
+			return true;
+		} else {
+			throw new PrescriberInvalidDataException("Prescriber creation failed, DeaNumber cannot be null");
+		}
+
+	}
+
+	public boolean validateDob() {
+		return true;
+	}
+
+}

@@ -1,0 +1,109 @@
+package com.cubic.ehr.prescriber.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.cubic.ehr.common.exception.DuplicateEntryException;
+import com.cubic.ehr.common.exception.PrescriberInvalidDataException;
+import com.cubic.ehr.common.exception.PrescriberNotFoundException;
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.data.PrescriberVOstatus;
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+import com.cubic.ehr.dao.repo.PrescriberRepo;
+
+
+@Service
+@Transactional
+public class PrescriberServiceImpl implements PrescriberService {
+
+	@Autowired
+	private PrescriberRepo prescriberRepo;
+
+	@Autowired
+	private PrescriberMapper mapper;
+	
+	@Autowired
+	private PrescriberValidator prescriberValidator;
+	
+	@Override
+	public PrescriberVO createPrescriber(final PrescriberVO prescriber) {
+		PrescriberEntity entity1 = searchPrescriberFromDea(prescriber.getDeaNumber());
+		System.out.println(prescriber.getDeaNumber());
+		
+		prescriberValidator.validate(prescriber);
+		
+		if (entity1 != null) {
+			System.out.println(entity1.getDeaNumber());
+			if(prescriber.getDeaNumber().equals(entity1.getDeaNumber())) {
+				throw new DuplicateEntryException("Prescriber creation failed, Duplicate Entry");
+			}
+		}
+		if (prescriber == null || StringUtils.isEmpty(prescriber.getFirstName())
+				|| StringUtils.isEmpty(prescriber.getLastName()) || StringUtils.isEmpty(prescriber.getPhoneNumber())
+				|| StringUtils.isEmpty(prescriber.getDeaNumber()) || StringUtils.isEmpty(prescriber.getSpecialization())
+				|| StringUtils.isEmpty(prescriber.getGender())) {
+			throw new PrescriberInvalidDataException("Prescriber creation failed, required fields are missing");
+		}
+		final PrescriberEntity entity = mapper.mapToPrescriberEntity(prescriber);
+		prescriberRepo.save(entity);
+		prescriber.setId(entity.getPk());
+		System.out.println(prescriber);
+		return prescriber;
+	}
+
+	@Override
+	public void modifyPrescriber(final PrescriberVO prescriber) {
+		if (prescriber == null || StringUtils.isEmpty(prescriber.getFirstName())
+				|| StringUtils.isEmpty(prescriber.getLastName()) || StringUtils.isEmpty(prescriber.getPhoneNumber())
+				|| StringUtils.isEmpty(prescriber.getDeaNumber()) || StringUtils.isEmpty(prescriber.getSpecialization())
+				|| StringUtils.isEmpty(prescriber.getGender())) {
+			throw new PrescriberInvalidDataException("Prescriber creation failed, required fields are missing");
+		}
+		PrescriberEntity entity = findPrescriberEntity(prescriber.getId());
+		System.out.println("Before Map: " + entity);
+		entity = mapper.mapToPrescriberEntity(entity, prescriber);
+		prescriberRepo.save(entity);
+	}
+
+	@Override
+	public void prescriberStatus(final PrescriberVOstatus prescriber) {
+		System.out.println("from service");
+		prescriberRepo.setActiveForPrescriberEntity(prescriber.getActive(), prescriber.getId());
+	}
+
+	@Override
+	public List<PrescriberVO> searchPrescriber(String name, String deaNumber) {
+		final String sName = (name == null) ? "%" : name.trim() + "%";
+		final String dea = (deaNumber == null) ? "%" : deaNumber.trim() + "%";
+		final List<PrescriberEntity> entities = prescriberRepo.search(sName, dea);
+		return mapper.mapToPrescriberDataList(entities);
+	}
+
+	@Override
+	public PrescriberVO findPrescriber(Long id) {
+		if (id == null) {
+			throw new PrescriberInvalidDataException("Id is required to find Prescriber");
+		}
+		final PrescriberEntity entity = findPrescriberEntity(id);
+		return mapper.mapToPrescriberVO(entity);
+	}	
+	
+	private PrescriberEntity findPrescriberEntity(final Long id) {
+		PrescriberEntity entity = prescriberRepo.findOne(id);
+		if (entity == null) {
+			throw new PrescriberNotFoundException("Prescriber was not found in the system");
+		}
+		return entity;
+	}
+
+	public PrescriberEntity searchPrescriberFromDea(String deaNumber) {
+		final PrescriberEntity entity = prescriberRepo.searchDea(deaNumber);
+		return entity;
+	}
+	
+	
+}

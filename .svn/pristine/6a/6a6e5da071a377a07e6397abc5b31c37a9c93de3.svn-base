@@ -1,0 +1,59 @@
+package com.cubic.ehr.prescriber.service;
+
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import com.cubic.ehr.common.enum1.EnumStatus;
+import com.cubic.ehr.prescriber.data.PrescriberSearchResult;
+import com.cubic.ehr.prescriber.data.PrescriberVO;
+import com.cubic.ehr.prescriber.entity.PrescriberEntity;
+import com.cubic.ehr.prescriber.repo.PrescriberRepo;
+import com.sun.media.sound.InvalidDataException;
+
+
+@Service
+public class PrescriberServiceImpl implements PrescriberService {
+
+	@Autowired
+	private PrescriberRepo repo1;
+
+	@Autowired
+	private PrescriberMapper mapper;
+	
+	@Override
+	public PrescriberVO createPrescriber(PrescriberVO prescriber) throws InvalidDataException {
+		// TODO Auto-generated method stub
+		if (prescriber == null || StringUtils.isEmpty(prescriber.getFirstName())
+				|| StringUtils.isEmpty(prescriber.getLastName())) {
+			throw new InvalidDataException("Customer creation failed, A valid first name and last name is required");
+			//return null;
+		}
+		final PrescriberEntity entity = mapper.mapToPrescriberEntity(prescriber);
+		repo1.save(entity);
+		prescriber.setId(entity.getPk());
+		return prescriber;
+	}
+
+	@Override
+	public void modifyPrescriber(PrescriberVO prescriber) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PrescriberVO prescriberStatus(Long id, Set<EnumStatus> status) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PrescriberSearchResult searchPrescriber(String name, String deaNumber) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

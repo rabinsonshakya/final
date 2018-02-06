@@ -1,0 +1,7 @@
+package com.cubic.ehr.prescriber.entity;
+
+public interface QueryConstant {
+
+	String PRESCRIBER_SEARCH = "PRESCRIBER_SEARCH";
+
+}

@@ -1,0 +1,6 @@
+com\cubic\ehr\dao\entity\PrescriberEntity.class
+com\cubic\ehr\dao\data\PrescriberVOstatus.class
+com\cubic\ehr\dao\data\PrescriberVO.class
+com\cubic\ehr\dao\repo\PrescriberRepo.class
+com\cubic\ehr\dao\data\ErrorResponse.class
+com\cubic\ehr\dao\data\PrescriberSearchResult.class

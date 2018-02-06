@@ -1,0 +1,9 @@
+package com.cubic.ehr.prescriber.repo;
+
+import org.springframework.data.repository.CrudRepository;
+
+import com.cubic.ehr.prescriber.entity.PrescriberEntity;
+
+public interface PrescriberRepo extends CrudRepository<PrescriberEntity, Long> {
+
+}

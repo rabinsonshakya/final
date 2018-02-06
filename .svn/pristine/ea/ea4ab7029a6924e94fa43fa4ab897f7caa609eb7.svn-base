@@ -1,0 +1,65 @@
+package com.cubic.ehr.prescriber.service;
+
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.cubic.ehr.common.enum1.EnumStatus;
+import com.cubic.ehr.dao.data.PrescriberSearchResult;
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+import com.cubic.ehr.dao.repo.PrescriberRepo;
+
+
+@Service
+public class PrescriberServiceImpl implements PrescriberService {
+
+	@Autowired
+	private PrescriberRepo prescriberRepo;
+
+	@Autowired
+	private PrescriberMapper mapper;
+	
+	@Override
+	public PrescriberVO createPrescriber(PrescriberVO prescriber) {
+		// TODO Auto-generated method stub
+		final PrescriberEntity entity = mapper.mapToPrescriberEntity(prescriber);
+		prescriberRepo.save(entity);
+		prescriber.setId(entity.getPk());
+		prescriber.setCreatedDate(entity.getCreatedDate());
+		return prescriber;
+	}
+
+	@Override
+	public void modifyPrescriber(PrescriberVO prescriber) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public PrescriberVO prescriberStatus(Long id, Set<EnumStatus> status) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PrescriberSearchResult searchPrescriber(String name, String deaNumber) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public PrescriberVO findPrescriber(Long id) {
+		// TODO Auto-generated method stub
+		final PrescriberEntity entity = findPrescriberEntity(id);
+
+		return mapper.mapToPrescriberVO(entity);
+	}	
+	
+	private PrescriberEntity findPrescriberEntity(final Long id) {
+		PrescriberEntity entity = prescriberRepo.findOne(id);
+		return entity;
+	}
+	
+}

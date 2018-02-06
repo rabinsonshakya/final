@@ -1,0 +1,6 @@
+package com.cubic.ehr.common.enum1;
+
+public enum Status {
+	Yes, No;
+
+}

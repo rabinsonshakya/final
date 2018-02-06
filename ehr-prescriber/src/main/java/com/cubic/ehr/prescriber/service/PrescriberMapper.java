@@ -1,0 +1,62 @@
+package com.cubic.ehr.prescriber.service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+
+
+@Component
+public class PrescriberMapper {
+
+	public PrescriberEntity mapToPrescriberEntity(final PrescriberVO data) {
+		return mapToPrescriberEntity(new PrescriberEntity(), data);
+	}
+	
+	public PrescriberEntity mapToPrescriberEntity(final PrescriberEntity entity, final PrescriberVO data) {
+		entity.setFirstName(data.getFirstName());
+		entity.setLastName(data.getLastName());
+		entity.setPhoneNumber(data.getPhoneNumber());
+		entity.setFaxNumber(data.getFaxNumber());
+		entity.setEmailId(data.getEmailId());
+		entity.setDeaNumber(data.getDeaNumber());
+		entity.setActive(data.getActive());
+		entity.setSpecialization(data.getSpecialization());
+//		entity.setCreatedDate(data.getSpecialization());
+//		entity.setModifiedDate(data.getModifiedDate());
+		entity.setDob(data.getDob());
+		entity.setGender(data.getGender());
+		entity.setDescription(data.getDescription());
+		return entity;
+	}
+	
+	public PrescriberVO mapToPrescriberVO(final PrescriberEntity entity) {
+		final PrescriberVO result = new PrescriberVO();
+		result.setFirstName(entity.getFirstName());
+		result.setLastName(entity.getLastName());
+		result.setPhoneNumber(entity.getPhoneNumber());
+		result.setFaxNumber(entity.getFaxNumber());
+		result.setEmailId(entity.getEmailId());
+		result.setDeaNumber(entity.getDeaNumber());
+		result.setActive(entity.getActive());
+		result.setSpecialization(entity.getSpecialization());
+//		result.setCreatedDate(entity.getCreatedDate());
+//		result.setModifiedDate(entity.getModifiedDate());
+		result.setDob(entity.getDob());
+		result.setGender(entity.getGender());
+		result.setDescription(entity.getDescription());
+		result.setId(entity.getPk());
+		return result;
+	}
+
+	public List<PrescriberVO> mapToPrescriberDataList(final List<PrescriberEntity> entityList) {
+		final List<PrescriberVO> result = new ArrayList<PrescriberVO>();
+		for (PrescriberEntity entity : entityList) {
+			result.add(mapToPrescriberVO(entity));
+		}
+		return result;
+	}
+}

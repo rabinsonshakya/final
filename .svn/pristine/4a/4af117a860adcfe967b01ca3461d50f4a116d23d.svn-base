@@ -1,0 +1,21 @@
+package com.cubic.ehr.prescriber.service;
+
+import java.util.Set;
+
+import com.cubic.ehr.common.enum1.EnumStatus;
+import com.cubic.ehr.dao.data.PrescriberSearchResult;
+import com.cubic.ehr.dao.data.PrescriberVO;
+
+public interface PrescriberService {
+
+	PrescriberVO createPrescriber(final PrescriberVO prescriber);
+
+	void modifyPrescriber(final PrescriberVO prescriber);
+
+	PrescriberVO prescriberStatus(Long id, Set<EnumStatus> status);
+
+	PrescriberSearchResult searchPrescriber(final String name, final String deaNumber);
+
+	PrescriberVO findPrescriber(Long id);
+
+}

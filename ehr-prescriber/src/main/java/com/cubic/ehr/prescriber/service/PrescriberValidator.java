@@ -1,0 +1,64 @@
+package com.cubic.ehr.prescriber.service;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import com.cubic.ehr.common.Validation;
+import com.cubic.ehr.common.exception.PrescriberInvalidDataException;
+import com.cubic.ehr.dao.data.PrescriberVO;
+
+@Component
+public class PrescriberValidator extends Validation {
+	
+	private final static Logger Logger = LoggerFactory.getLogger(PrescriberValidator.class);
+
+	public void validate(final PrescriberVO prescriber) {
+		Logger.debug(" Entering PrescriberValidator.validate");
+		
+		//Validate FirstName
+		if(validateLength(prescriber.getFirstName(), 20, 2) == false) {
+			Logger.debug("Invalid input values for FirstName, throwing Exception");
+			throw new PrescriberInvalidDataException("Prescriber creation failed, firstName not Valid");
+		}
+		
+		//Validate LastName
+		if(validateLength(prescriber.getLastName(), 20, 2) == false) {
+			Logger.debug("Invalid input values for LastName, throwing Exception");
+			throw new PrescriberInvalidDataException("Prescriber creation failed, LastName not Valid");
+		}
+		
+		//Validate PhoneNumber
+		if(prescriber.getPhoneNumber() == null || validatePhoneNumber(prescriber.getPhoneNumber()) == false) {
+			Logger.debug("Invalid input values for PhoneNumber, throwing Exception");
+			throw new PrescriberInvalidDataException("Prescriber creation failed, PhoneNumber not Valid");
+		}
+		
+		//Validate FaxNumber
+		if(validateFaxNumber(prescriber.getFaxNumber()) == false) {
+			Logger.debug("Invalid input values for FaxNumber, throwing Exception");
+			throw new PrescriberInvalidDataException("Prescriber creation failed, FaxNumber not Valid");
+		}
+		
+		//Validate email
+		if(prescriber.getEmailId() != null && validateEmailId(prescriber.getEmailId()) == false) {
+			Logger.debug("Invalid input values for email, throwing Exception");
+			throw new PrescriberInvalidDataException("Prescriber creation failed, email not Valid");
+		} 
+		
+		//Validate DeaNumber
+		if(validateDeaNumber(prescriber.getDeaNumber()) == false) {
+			Logger.debug("Invalid input values for DeaNumber, throwing Exception");
+			throw new PrescriberInvalidDataException("Prescriber creation failed, DeaNumber not Valid");
+		}
+		
+		//Validate Date of Birth
+		if(prescriber.getDob() != null && validateAgeRange(prescriber.getDob(), 80, 20) == false) {
+			Logger.debug("Invalid input values for Date of Birth, throwing Exception");
+			throw new PrescriberInvalidDataException("Prescriber creation failed, Date of Birth not Valid");
+		}
+		Logger.debug("Exiting PrescriberValidator.validate");
+		
+	}
+	
+}

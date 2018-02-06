@@ -1,0 +1,7 @@
+com\cubic\ehr\dao\handler\GenericExceptionHandler.class
+com\cubic\ehr\rest\resources\SimpleCORSFilter.class
+com\cubic\ehr\rest\resources\HelloWorldRest.class
+com\cubic\ehr\dao\handler\DuplicateExceptionHandler.class
+com\cubic\ehr\rest\resources\PrescriberWS.class
+com\cubic\ehr\dao\handler\PrescriberNotFoundHandler.class
+com\cubic\ehr\dao\handler\InvalidDataExceptionHandler.class

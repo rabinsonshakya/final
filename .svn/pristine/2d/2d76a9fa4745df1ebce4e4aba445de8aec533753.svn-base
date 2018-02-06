@@ -1,0 +1,26 @@
+package com.cubic.ehr.prescriber.service;
+
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.runners.MockitoJUnitRunner;
+
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+
+@RunWith(MockitoJUnitRunner.class)
+public class PrescriberServiceImplTest{
+	@Mock
+	private PrescriberVO vo;
+
+	@Mock
+	private PrescriberService service;
+
+	@Spy
+	private PrescriberServiceImpl impl;
+
+	private PrescriberVO input;
+	private PrescriberEntity entity;
+	
+	
+}

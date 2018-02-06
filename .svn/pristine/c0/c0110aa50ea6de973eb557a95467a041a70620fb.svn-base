@@ -1,0 +1,87 @@
+package com.cubic.ehr.common;
+
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
+import org.springframework.util.StringUtils;
+
+public class Validation {
+
+	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
+			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+
+	private static final String DEA_PATTERN = "^[a-zA-Z]{2}\\d{7}$";
+
+	public boolean validateLength(String str, int max, int min) {
+		return (!(StringUtils.isEmpty(str)) && (str.length() <= max && str.length() >= min));
+	}
+
+	public boolean validateEmailId(String emailId) {
+		return (!(StringUtils.isEmpty(emailId)) && emailId.matches(EMAIL_PATTERN));
+
+	}
+
+	public boolean validateDeaNumber(String deaNumber) {
+		return (!(StringUtils.isEmpty(deaNumber)) && deaNumber.matches(DEA_PATTERN));
+
+	}
+
+	public boolean validateAgeRange(Date date, int max, int min) {
+		Date current = new Date();
+		LocalDate localDate = current.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+		LocalDate ageDate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+		System.out.println((localDate.getYear() - ageDate.getYear()));
+		return (!((localDate.getYear() - ageDate.getYear()) < min || (localDate.getYear() - ageDate.getYear()) > max));
+	}
+
+	public boolean validatePhoneNumber(String phoneNumber) {
+		if (phoneNumber != null) {
+			// validate phone numbers of format "1234567890"
+			if (phoneNumber.matches("\\d{10}"))
+				return true;
+			// validating phone number with -, . or spaces
+			else if (phoneNumber.matches("\\d{3}[-\\.\\s]\\d{3}[-\\.\\s]\\d{4}"))
+				return true;
+			// validating phone number with extension length from 3 to 5
+			else if (phoneNumber.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}"))
+				return true;
+			// validating phone number where area code is in braces ()
+			else if (phoneNumber.matches("\\(\\d{3}\\)-\\d{3}-\\d{4}"))
+				return true;
+			// return false if nothing matches the input
+			else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+
+	}
+
+	public boolean validateFaxNumber(String faxNumber) {
+		if (faxNumber != null) {
+			// validate phone numbers of format "1234567890"
+			if (faxNumber.matches("\\d{10}"))
+				return true;
+			// validating phone number with -, . or spaces
+			else if (faxNumber.matches("\\d{3}[-\\.\\s]\\d{3}[-\\.\\s]\\d{4}"))
+				return true;
+			// validating phone number with extension length from 3 to 5
+			else if (faxNumber.matches("\\d{3}-\\d{3}-\\d{4}\\s(x|(ext))\\d{3,5}"))
+				return true;
+			// validating phone number where area code is in braces ()
+			else if (faxNumber.matches("\\(\\d{3}\\)-\\d{3}-\\d{4}"))
+				return true;
+			// return false if nothing matches the input
+			else {
+				return false;
+			}
+		} else {
+			return true;
+		}
+
+	}
+
+}

@@ -1,0 +1,15 @@
+package com.cubic.ehr.dao.repo;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+
+
+public interface PrescriberRepo extends CrudRepository<PrescriberEntity, Long> {
+	@Query("select x from PrescriberEntity x where UPPER(x.firstName) like UPPER(?1) AND UPPER(x.deaNumber) like UPPER(?2)")
+	List<PrescriberEntity> search(final String firstName, final String deaNumber);
+	
+}

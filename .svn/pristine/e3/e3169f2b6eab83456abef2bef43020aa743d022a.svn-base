@@ -1,0 +1,23 @@
+package com.cubic.ehr.prescriber.test;
+
+import com.cubic.ehr.dao.data.PrescriberVO;
+import com.cubic.ehr.dao.entity.PrescriberEntity;
+
+public class PrescriberData {
+	
+	public static PrescriberVO createPrescriber() {
+		final PrescriberVO vo = new PrescriberVO();
+		vo.setFirstName("Rabinson");
+		vo.setLastName("Shakya");
+		return vo;
+	}
+
+	public static PrescriberEntity createProductEntity() {
+		final PrescriberEntity entity = new PrescriberEntity();
+		entity.setFirstName("Salomon");
+		entity.setLastName("Kalou");
+		entity.setPk(new Long(2000));
+		return entity;
+	}
+
+}

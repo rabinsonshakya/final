@@ -1,0 +1,22 @@
+package com.cubic.ehr.dao.ExceptionHandler;
+
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.ext.ExceptionMapper;
+import javax.ws.rs.ext.Provider;
+
+import com.cubic.ehr.common.exception.PrescriberInvalidDataException;
+import com.cubic.ehr.dao.data.ErrorResponse;
+
+@Provider
+public class InvalidDataExceptionHandler implements ExceptionMapper<PrescriberInvalidDataException> {
+
+	@Override
+	public Response toResponse(PrescriberInvalidDataException exception) {
+		final ErrorResponse entity = new ErrorResponse("ERR-510", exception.getMessage());
+		return Response.status(510).type(MediaType.APPLICATION_XML).entity(entity).build();
+
+	}
+
+
+}
